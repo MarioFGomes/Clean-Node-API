@@ -4,7 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "test": "jest --passWithNoTests",
+    "test": "jest --passWithNoTests --watch",
     "lint": "eslint src --ext .ts --fix",
     "prepare": "husky && husky install",
     "test:staged":"jest --passWithNoTests"
