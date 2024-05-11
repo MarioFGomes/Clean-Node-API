@@ -1,4 +1,4 @@
-import { type IEmailValidator } from '../../protocols/email-validator'
+import { type IEmailValidator } from '../../protocols'
 import { ServerError, InvalidParamError, MissingParamError } from '../errors'
 import { SingUpController } from './singup'
 
