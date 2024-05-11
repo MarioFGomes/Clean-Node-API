@@ -1,7 +1,7 @@
-import { type AccountModel } from '../../domain/models/account'
-import { type AddAccountModel, type IAddAccount } from '../../domain/usecases/add-account'
-import { type IEmailValidator } from '../../protocols'
-import { ServerError, InvalidParamError, MissingParamError } from '../errors'
+import { type AccountModel } from '../../../domain/models/account'
+import { type AddAccountModel, type IAddAccount } from '../../../domain/usecases/add-account'
+import { type IEmailValidator } from './singup-protocols'
+import { ServerError, InvalidParamError, MissingParamError } from '../../errors'
 import { SingUpController } from './singup'
 
 function makeEmailValidator (): IEmailValidator {
