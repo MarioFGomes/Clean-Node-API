@@ -1,9 +1,13 @@
+import { type IAddAccount } from '../../domain/usecases/add-account'
 import { type HttpRequest, type HttpResponse, type Controller, type IEmailValidator } from '../../protocols'
 import { InvalidParamError, MissingParamError } from '../errors'
 import { BadRequest, serverError } from '../helpers/http-helper'
 
 export class SingUpController implements Controller {
-  constructor (private readonly emailValidator: IEmailValidator) {}
+  constructor (private readonly emailValidator: IEmailValidator,
+    private readonly AddAccount: IAddAccount
+  ) {}
+
   handle (httpRequest: HttpRequest): HttpResponse {
     try {
       const requiredFields = ['name', 'email', 'password', 'confirmPassword']
@@ -21,9 +25,15 @@ export class SingUpController implements Controller {
 
       if (password !== confirmPassword) return BadRequest(new InvalidParamError('confirmPassword'))
 
+      const account = this.AddAccount.add({
+        name,
+        email,
+        password
+      })
+
       return {
         statusCode: 200,
-        body: 'success'
+        body: account
       }
     } catch (error) {
       return serverError()
