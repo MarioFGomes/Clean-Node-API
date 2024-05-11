@@ -3,8 +3,7 @@ import { type IEmailValidator } from '../../protocols/email-validator'
 import { type HttpRequest, type HttpResponse } from '../../protocols/http'
 import { InvalidParamError } from '../errors/Invalid-param'
 import { MissingParamError } from '../errors/MissingParam'
-import { ServerError } from '../errors/server-error'
-import { badRequest } from '../helpers/http-helper'
+import { BadRequest, serverError } from '../helpers/http-helper'
 
 export class SingUpController implements Controller {
   constructor (private readonly emailValidator: IEmailValidator) {}
@@ -14,22 +13,19 @@ export class SingUpController implements Controller {
 
       for (const fields of requiredFields) {
         if (!httpRequest.body[fields]) {
-          return badRequest(new MissingParamError(fields))
+          return BadRequest(new MissingParamError(fields))
         }
       }
       const IsValidEmail = this.emailValidator.isValid(httpRequest.body.email)
 
-      if (!IsValidEmail) return badRequest(new InvalidParamError('email'))
+      if (!IsValidEmail) return BadRequest(new InvalidParamError('email'))
 
       return {
         statusCode: 200,
         body: 'success'
       }
     } catch (error) {
-      return {
-        statusCode: 500,
-        body: new ServerError()
-      }
+      return serverError()
     }
   }
 }
