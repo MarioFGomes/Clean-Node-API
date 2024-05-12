@@ -1,6 +1,6 @@
 import { type HttpRequest, type HttpResponse, type Controller, type IEmailValidator, type IAddAccount } from './singup-protocols'
 import { InvalidParamError, MissingParamError } from '../../errors'
-import { BadRequest, serverError } from '../../helpers/http-helper'
+import { BadRequest, Ok, serverError } from '../../helpers/http-helper'
 
 export class SingUpController implements Controller {
   constructor (private readonly emailValidator: IEmailValidator,
@@ -29,11 +29,7 @@ export class SingUpController implements Controller {
         email,
         password
       })
-
-      return {
-        statusCode: 200,
-        body: account
-      }
+      return Ok(account)
     } catch (error) {
       return serverError()
     }
