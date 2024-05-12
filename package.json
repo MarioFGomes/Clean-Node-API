@@ -5,13 +5,13 @@
   "main": "index.js",
   "scripts": {
     "test": "jest --passWithNoTests --silent --noStackTrace --runInBand",
-    "test:unit":"npm test -- --watch -c jest-unit-config.ts",
-    "test:integration":"npm test -- --watch -c jest-integration-config.ts",
+    "test:unit": "npm test -- --watch -c jest-unit-config.ts",
+    "test:integration": "npm test -- --watch -c jest-integration-config.ts",
     "test:verbose": "jest --passWithNoTests --runInBand",
     "lint": "eslint src --ext .ts --fix",
     "prepare": "husky && husky install",
-    "test:staged":"npm test -- --findRelatedTests",
-    "test:ci":"npm test -- --coverage"
+    "test:staged": "npm test -- --findRelatedTests",
+    "test:ci": "npm test -- --coverage"
   },
   "keywords": [],
   "author": "",
@@ -19,6 +19,7 @@
   "devDependencies": {
     "@types/jest": "^29.5.12",
     "@types/node": "^20.12.7",
+    "@types/validator": "^13.11.10",
     "@typescript-eslint/eslint-plugin": "^6.21.0",
     "@typescript-eslint/parser": "^6.21.0",
     "eslint": "^8.57.0",
@@ -39,5 +40,8 @@
       "eslint --cache --fix",
       "git add"
     ]
+  },
+  "dependencies": {
+    "validator": "^13.12.0"
   }
 }
