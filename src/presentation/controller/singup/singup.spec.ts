@@ -229,4 +229,28 @@ describe('SingUpController', () => {
 
     })
   })
+
+  test('should return 200 if AddAccount valid data is provider', () => {
+    const { sut } = makeSut()
+
+    const httpRequest = {
+      body: {
+        id: 'uuid-1',
+        name: 'valid_name',
+        email: 'valid_email',
+        password: 'valid_password',
+        confirmPassword: 'valid_password'
+      }
+    }
+
+    const httpResponse = sut.handle(httpRequest)
+
+    expect(httpResponse.statusCode).toBe(200)
+    expect(httpResponse.body).toEqual({
+      id: 'uuid-1',
+      name: 'valid_name',
+      email: 'valid_email',
+      password: 'valid_password'
+    })
+  })
 })
