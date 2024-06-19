@@ -10,6 +10,11 @@ describe('SingUp Routes', () => {
     await MongoHelper.disconnect()
   })
 
+  beforeEach(async () => {
+    const accountCollection = MongoHelper.getCollation('accounts')
+    await accountCollection.deleteMany({})
+  })
+
   test('should return an account on success', async () => {
     await request(app).post('/api/signup')
       .send({

@@ -7,6 +7,10 @@ describe('Account Mongo Repository', () => {
   afterAll(async () => {
     await MongoHelper.disconnect()
   })
+  beforeEach(async () => {
+    const accountCollection = MongoHelper.getCollation('accounts')
+    await accountCollection.deleteMany({})
+  })
   test('should return an account on success', async () => {
     const sut = new AccountMongoRepository()
     const account = await sut.add({
