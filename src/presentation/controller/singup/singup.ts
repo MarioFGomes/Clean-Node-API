@@ -1,8 +1,8 @@
-import { type HttpRequest, type HttpResponse, type Controller, type IEmailValidator, type IAddAccount } from './singup-protocols'
+import { type HttpRequest, type HttpResponse, type IController, type IEmailValidator, type IAddAccount } from './singup-protocols'
 import { InvalidParamError, MissingParamError } from '../../errors'
 import { BadRequest, Ok, serverError } from '../../helpers/http-helper'
 
-export class SingUpController implements Controller {
+export class SingUpController implements IController {
   constructor (private readonly emailValidator: IEmailValidator,
     private readonly AddAccount: IAddAccount
   ) {}
