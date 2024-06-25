@@ -11,7 +11,7 @@ describe('SingUp Routes', () => {
   })
 
   beforeEach(async () => {
-    const accountCollection = MongoHelper.getCollation('accounts')
+    const accountCollection = await MongoHelper.getCollation('accounts')
     await accountCollection.deleteMany({})
   })
 

@@ -2,7 +2,10 @@ import { type Collection, MongoClient } from 'mongodb'
 
 export const MongoHelper = {
   client: null as unknown as MongoClient,
+  uri: null as unknown as string,
+
   async connect (url: string): Promise<void> {
+    this.uri = url
     this.client = await MongoClient.connect(url)
   },
 
@@ -10,7 +13,8 @@ export const MongoHelper = {
     await this.client.close()
   },
 
-  getCollation (name: string): Collection {
+  async getCollation (name: string): Promise<Collection> {
+    this.connect(this.uri)
     return this.client.db().collection(name)
   },
 
