@@ -6,18 +6,22 @@ interface SutTypes {
   controllerStub: IController
 }
 
-class ControllerStub implements IController {
-  async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
-    const response: HttpResponse = {
-      body: { name: 'Mario Gomes' },
-      statusCode: 200
+const makeController = (): IController => {
+  class ControllerStub implements IController {
+    async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
+      const response: HttpResponse = {
+        body: { name: 'Mario Gomes' },
+        statusCode: 200
+      }
+      return await new Promise(resolve => { resolve(response) })
     }
-    return await new Promise(resolve => { resolve(response) })
   }
+
+  return new ControllerStub()
 }
 
 const makeSut = (): SutTypes => {
-  const controllerStub = new ControllerStub()
+  const controllerStub = makeController()
   const sut = new LogControllerDecorator(controllerStub)
 
   return {
