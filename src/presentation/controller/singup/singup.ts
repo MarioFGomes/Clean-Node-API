@@ -18,6 +18,7 @@ export class SingUpController implements IController {
       }
       const { name, email, password, confirmPassword } = httpRequest.body
 
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       const IsValidEmail = this.emailValidator.isValid(email)
 
       if (!IsValidEmail) return BadRequest(new InvalidParamError('email'))
@@ -30,8 +31,9 @@ export class SingUpController implements IController {
         password
       })
       return Ok(account)
-    } catch (error) {
-      return serverError()
+    } catch (error: any) {
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      return serverError(error)
     }
   }
 }
