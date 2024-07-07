@@ -32,6 +32,7 @@ export class SingUpController implements IController {
       })
       return Ok(account)
     } catch (error: any) {
+      console.log(error)
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       return serverError(error)
     }

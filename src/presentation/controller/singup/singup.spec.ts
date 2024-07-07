@@ -1,5 +1,5 @@
 import { type AccountModel } from '../../../domain/models/account'
-import { type AddAccountModel, type IAddAccount } from '../../../domain/usecases/add-account'
+import { type IAddAccountModel, type IAddAccount } from '../../../domain/usecases/add-account'
 import { type HttpRequest, type IEmailValidator } from './singup-protocols'
 import { ServerError, InvalidParamError, MissingParamError } from '../../errors'
 import { SingUpController } from './singup'
@@ -25,7 +25,7 @@ const makeFakeAccount = (): AccountModel => ({
 
 function makeAddAccount (): IAddAccount {
   class AddAccountStub implements IAddAccount {
-    async add (account: AddAccountModel): Promise<AccountModel> {
+    async add (account: IAddAccountModel): Promise<AccountModel> {
       return await new Promise(resolve => { resolve(makeFakeAccount()) })
     }
   }

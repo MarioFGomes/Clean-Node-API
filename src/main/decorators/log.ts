@@ -10,7 +10,7 @@ export class LogControllerDecorator implements IController {
     const httpResponse = await this._controller.handle(httpRequest)
     if (httpResponse.statusCode === 500) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      await this.logErrorRepository.log(httpResponse.body.stack)
+      await this.logErrorRepository.logError(httpResponse.body.stack)
     }
     return httpResponse
   }
