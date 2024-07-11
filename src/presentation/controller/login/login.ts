@@ -6,14 +6,15 @@ import { type IEmailValidator } from '../singup/singup-protocols'
 export class LoginController implements IController {
   constructor (private readonly emailValidator: IEmailValidator) {}
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
-    if (!httpRequest.body.email) {
+    const { email, password } = httpRequest.body
+    if (!email) {
       return await new Promise(resolve => { resolve(BadRequest(new MissingParamError('email'))) })
     }
-    if (!httpRequest.body.password) {
+    if (!password) {
       return await new Promise(resolve => { resolve(BadRequest(new MissingParamError('password'))) })
     }
     // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-    const IsValid = this.emailValidator.isValid(httpRequest.body.email)
+    const IsValid = this.emailValidator.isValid(email)
     if (!IsValid) {
       return await new Promise(resolve => { resolve(BadRequest(new InvalidParamError('email'))) })
     }
