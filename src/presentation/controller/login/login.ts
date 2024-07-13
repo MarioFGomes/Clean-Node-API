@@ -1,10 +1,14 @@
+import { type IAuthentication } from '../../../domain/usecases/authentication'
 import { type HttpRequest, type HttpResponse, type IController } from '../../../protocols'
 import { InvalidParamError, MissingParamError } from '../../errors'
-import { BadRequest, serverError } from '../../helpers/http-helper'
+import { BadRequest, Ok, serverError } from '../../helpers/http-helper'
 import { type IEmailValidator } from '../singup/singup-protocols'
 
 export class LoginController implements IController {
-  constructor (private readonly emailValidator: IEmailValidator) {}
+  constructor (private readonly emailValidator: IEmailValidator,
+    private readonly authentication: IAuthentication
+  ) {}
+
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
       const { email, password } = httpRequest.body
@@ -19,11 +23,9 @@ export class LoginController implements IController {
       if (!IsValid) {
         return await new Promise(resolve => { resolve(BadRequest(new InvalidParamError('email'))) })
       }
-      const data = {
-        statusCode: 200,
-        body: 'anything'
-      }
-      return await new Promise(resolve => { resolve(data) })
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      const token = await this.authentication.auth(email, password)
+      return Ok(token)
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       return serverError(err)
