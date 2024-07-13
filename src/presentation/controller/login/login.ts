@@ -11,17 +11,18 @@ export class LoginController implements IController {
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
+      const requiredFields = ['email', 'password']
+
+      for (const fields of requiredFields) {
+        if (!httpRequest.body[fields]) {
+          return BadRequest(new MissingParamError(fields))
+        }
+      }
       const { email, password } = httpRequest.body
-      if (!email) {
-        return await new Promise(resolve => { resolve(BadRequest(new MissingParamError('email'))) })
-      }
-      if (!password) {
-        return await new Promise(resolve => { resolve(BadRequest(new MissingParamError('password'))) })
-      }
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       const IsValid = this.emailValidator.isValid(email)
       if (!IsValid) {
-        return await new Promise(resolve => { resolve(BadRequest(new InvalidParamError('email'))) })
+        return BadRequest(new InvalidParamError('email'))
       }
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       const token = await this.authentication.auth(email, password)
