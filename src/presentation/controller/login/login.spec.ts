@@ -1,9 +1,7 @@
 import { LoginController } from './login'
-import { BadRequest, serverError } from '../../helpers/http-helper'
-import { MissingParamError } from '../../errors/MissingParam'
-import { type HttpRequest, type IEmailValidator } from '../singup/singup-protocols'
-import { InvalidParamError } from '../../errors'
-import { type IAuthentication } from '../../../domain/usecases/authentication'
+import { BadRequest, Ok, serverError, unauthorized } from '../../helpers/http-helper'
+import { type HttpRequest, type IEmailValidator, type IAuthentication } from './login-protocols'
+import { InvalidParamError, MissingParamError } from '../../errors'
 
 interface SutTypes {
   sut: LoginController
@@ -29,7 +27,7 @@ const makeFakerRequest = (): HttpRequest => ({
 
 const makeAuthentication = (): IAuthentication => {
   class AuthenticationStub implements IAuthentication {
-    async auth (email: string, password: string): Promise<string> {
+    async auth (email: string, password: string): Promise<string | null> {
       return await new Promise(resolve => { resolve('any_token') })
     }
   }
@@ -99,5 +97,26 @@ describe('Login Controller', () => {
     const SpyAuth = jest.spyOn(authenticationStub, 'auth')
     await sut.handle(makeFakerRequest())
     expect(SpyAuth).toHaveBeenCalledWith('any_email@mail.com', 'any_password')
+  })
+
+  test('should return 401 if invalid credential is provided', async () => {
+    const { sut, authenticationStub } = makeSut()
+    jest.spyOn(authenticationStub, 'auth').mockReturnValueOnce(new Promise(resolve => { resolve(null) }))
+    const httpResponse = await sut.handle(makeFakerRequest())
+    expect(httpResponse).toEqual(unauthorized())
+  })
+
+  test('should return 500 if Authenticator throw', async () => {
+    const { sut, authenticationStub } = makeSut()
+
+    jest.spyOn(authenticationStub, 'auth').mockReturnValueOnce(new Promise((resolve, reject) => { reject(new Error()) }))
+    const httpResponse = await sut.handle(makeFakerRequest())
+    expect(httpResponse).toEqual(serverError(new Error()))
+  })
+
+  test('should return 200 if valid credential is provided', async () => {
+    const { sut } = makeSut()
+    const httpResponse = await sut.handle(makeFakerRequest())
+    expect(httpResponse).toEqual(Ok({ accessToken: 'any_token' }))
   })
 })
