@@ -1,8 +1,6 @@
-import { type IAuthentication } from '../../../domain/usecases/authentication'
-import { type HttpRequest, type HttpResponse, type IController } from '../../../protocols'
+import { type HttpRequest, type HttpResponse, type IController, type IAuthentication, type IEmailValidator } from './login-protocols'
 import { InvalidParamError, MissingParamError } from '../../errors'
-import { BadRequest, Ok, serverError } from '../../helpers/http-helper'
-import { type IEmailValidator } from '../singup/singup-protocols'
+import { BadRequest, Ok, serverError, unauthorized } from '../../helpers/http-helper'
 
 export class LoginController implements IController {
   constructor (private readonly emailValidator: IEmailValidator,
@@ -25,8 +23,9 @@ export class LoginController implements IController {
         return BadRequest(new InvalidParamError('email'))
       }
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      const token = await this.authentication.auth(email, password)
-      return Ok(token)
+      const accessToken = await this.authentication.auth(email, password)
+      if (!accessToken) return unauthorized()
+      return Ok({ accessToken })
     } catch (err: any) {
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       return serverError(err)
