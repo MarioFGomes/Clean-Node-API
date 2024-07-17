@@ -1,11 +1,11 @@
 import { type AccountModel } from '../../../domain/models/account'
 import { type IAddAccountModel, type IAddAccount } from '../../../domain/usecases/add-account'
-import { type HttpRequest, type IEmailValidator } from './singup-protocols'
+import { type HttpRequest, type IEmailValidator, type IValidation } from './singup-protocols'
 import { ServerError, InvalidParamError, MissingParamError } from '../../errors'
 import { SingUpController } from './singup'
 import { Ok, BadRequest, serverError } from '../../helpers/http-helper'
 
-function makeEmailValidator (): IEmailValidator {
+const makeEmailValidator = (): IEmailValidator => {
   class EmailValidatorStub implements IEmailValidator {
     isValid (email: string): boolean {
       return true
@@ -23,7 +23,7 @@ const makeFakeAccount = (): AccountModel => ({
 
 })
 
-function makeAddAccount (): IAddAccount {
+const makeAddAccount = (): IAddAccount => {
   class AddAccountStub implements IAddAccount {
     async add (account: IAddAccountModel): Promise<AccountModel> {
       return await new Promise(resolve => { resolve(makeFakeAccount()) })
@@ -33,10 +33,21 @@ function makeAddAccount (): IAddAccount {
   return new AddAccountStub()
 }
 
+const makeFakeValidation = (): IValidation => {
+  class ValidationStub implements IValidation {
+    validate (input: any): Error | null {
+      return null
+    }
+  }
+
+  return new ValidationStub()
+}
+
 interface SutTypes {
   sut: SingUpController
   emailValidatorStub: IEmailValidator
   addAccountStub: IAddAccount
+  validationStub: IValidation
 }
 
 const makeFakeRequest = (): HttpRequest => ({
@@ -52,11 +63,13 @@ const makeFakeRequest = (): HttpRequest => ({
 const makeSut = (): SutTypes => {
   const emailValidatorStub = makeEmailValidator()
   const addAccountStub = makeAddAccount()
-  const sut = new SingUpController(emailValidatorStub, addAccountStub)
+  const validationStub = makeFakeValidation()
+  const sut = new SingUpController(emailValidatorStub, addAccountStub, validationStub)
   return {
     sut,
     emailValidatorStub,
-    addAccountStub
+    addAccountStub,
+    validationStub
   }
 }
 describe('SingUpController', () => {
@@ -201,5 +214,14 @@ describe('SingUpController', () => {
     const { sut } = makeSut()
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(Ok(makeFakeAccount()))
+  })
+
+  test('should call validator with correct values', async () => {
+    const { sut, validationStub } = makeSut()
+    const validateSpy = jest.spyOn(validationStub, 'validate')
+
+    const httpResponse = await sut.handle(makeFakeRequest())
+
+    expect(validateSpy).toHaveBeenCalledWith(httpResponse.body)
   })
 })
