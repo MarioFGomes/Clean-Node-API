@@ -1,5 +1,5 @@
 import { type HttpRequest, type HttpResponse, type IController, type IEmailValidator, type IAddAccount, type IValidation } from './singup-protocols'
-import { InvalidParamError, MissingParamError } from '../../errors'
+import { InvalidParamError } from '../../errors'
 import { BadRequest, Ok, serverError } from '../../helpers/http-helper'
 
 export class SingUpController implements IController {
@@ -10,14 +10,9 @@ export class SingUpController implements IController {
 
   async handle (httpRequest: HttpRequest): Promise<HttpResponse> {
     try {
-      this.validation.validate(httpRequest.body)
-
-      const requiredFields = ['name', 'email', 'password', 'confirmPassword']
-
-      for (const fields of requiredFields) {
-        if (!httpRequest.body[fields]) {
-          return BadRequest(new MissingParamError(fields))
-        }
+      const error = this.validation.validate(httpRequest.body)
+      if (error) {
+        return BadRequest(error)
       }
       const { name, email, password, confirmPassword } = httpRequest.body
 
@@ -35,7 +30,6 @@ export class SingUpController implements IController {
       })
       return Ok(account)
     } catch (error: any) {
-      console.log(error)
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       return serverError(error)
     }
