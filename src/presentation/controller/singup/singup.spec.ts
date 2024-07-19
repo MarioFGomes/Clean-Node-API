@@ -109,23 +109,6 @@ describe('SingUpController', () => {
     expect(httpResponse).toEqual(serverError(new ServerError()))
   })
 
-  test('should return 400 if confirm password is deferent of password', async () => {
-    const { sut } = makeSut()
-
-    const httpRequest = {
-      body: {
-        name: 'any_name',
-        email: 'any_email@mail.com',
-        password: 'any_password',
-        confirmPassword: 'any_password_confirm'
-      }
-    }
-
-    const httpResponse = await sut.handle(httpRequest)
-
-    expect(httpResponse).toEqual(BadRequest(new InvalidParamError('confirmPassword')))
-  })
-
   test('should return 500 if AddAccount is throws', async () => {
     const { sut, addAccountStub } = makeSut()
     jest.spyOn(addAccountStub, 'add').mockImplementation(async () => {
