@@ -14,14 +14,12 @@ export class SingUpController implements IController {
       if (error) {
         return BadRequest(error)
       }
-      const { name, email, password, confirmPassword } = httpRequest.body
+      const { name, email, password } = httpRequest.body
 
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       const IsValidEmail = this.emailValidator.isValid(email)
 
       if (!IsValidEmail) return BadRequest(new InvalidParamError('email'))
-
-      if (password !== confirmPassword) return BadRequest(new InvalidParamError('confirmPassword'))
 
       const account = await this.AddAccount.add({
         name,
