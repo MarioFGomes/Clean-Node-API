@@ -1,10 +1,8 @@
-import { type HttpRequest, type HttpResponse, type IController, type IEmailValidator, type IAddAccount, type IValidation } from './singup-protocols'
-import { InvalidParamError } from '../../errors'
+import { type HttpRequest, type HttpResponse, type IController, type IAddAccount, type IValidation } from './singup-protocols'
 import { BadRequest, Ok, serverError } from '../../helpers/http-helper'
 
 export class SingUpController implements IController {
-  constructor (private readonly emailValidator: IEmailValidator,
-    private readonly AddAccount: IAddAccount,
+  constructor (private readonly AddAccount: IAddAccount,
     private readonly validation: IValidation
   ) {}
 
@@ -15,11 +13,6 @@ export class SingUpController implements IController {
         return BadRequest(error)
       }
       const { name, email, password } = httpRequest.body
-
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      const IsValidEmail = this.emailValidator.isValid(email)
-
-      if (!IsValidEmail) return BadRequest(new InvalidParamError('email'))
 
       const account = await this.AddAccount.add({
         name,
