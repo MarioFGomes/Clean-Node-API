@@ -1,5 +1,5 @@
 import { type HttpRequest, type HttpResponse, type IController, type IAddAccount, type IValidation } from './singup-protocols'
-import { BadRequest, Ok, serverError } from '../../helpers/http-helper'
+import { BadRequest, Ok, serverError } from '../../helpers/http/http-helper'
 
 export class SingUpController implements IController {
   constructor (private readonly AddAccount: IAddAccount,
