@@ -1,5 +1,5 @@
 import { type AuthenticationModel, type IAuthentication } from '../../../domain/usecases/authentication'
-import { type loadAccountByEmailRepository } from '../../protocols/load-account-by-email-repository'
+import { type loadAccountByEmailRepository } from '../../protocols/db/load-account-by-email-repository'
 
 export class DBauthentication implements IAuthentication {
   constructor (private readonly loadAccountByEmailRepository: loadAccountByEmailRepository) {}
