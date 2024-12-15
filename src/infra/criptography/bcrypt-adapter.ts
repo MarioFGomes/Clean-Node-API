@@ -13,6 +13,7 @@ export class BcryptAdapter implements IHasher, IHashComparer {
   }
 
   async compare (value: string, hashedValue: string): Promise<boolean> {
-    throw new Error('Method not implemented.')
+    const compare = await bcrypt.compare(value, hashedValue)
+    return compare
   }
 }
