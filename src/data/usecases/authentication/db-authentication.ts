@@ -1,9 +1,9 @@
-import { type IAuthentication, type AuthenticationModel, type IHashComparer, type ITokenGenerator, type loadAccountByEmailRepository, type IUpdateAccessTokenRepository } from './db-authentication-protocol'
+import { type IAuthentication, type AuthenticationModel, type IHashComparer, type IEncrypter, type loadAccountByEmailRepository, type IUpdateAccessTokenRepository } from './db-authentication-protocol'
 
 export class DBauthentication implements IAuthentication {
   constructor (private readonly loadAccountByEmailRepository: loadAccountByEmailRepository,
     private readonly hashComparer: IHashComparer,
-    private readonly tokenGenerator: ITokenGenerator,
+    private readonly encrypter: IEncrypter,
     private readonly updateAccessTokenRepository: IUpdateAccessTokenRepository) {}
 
   async auth (authenticator: AuthenticationModel): Promise<string | null> {
@@ -11,7 +11,7 @@ export class DBauthentication implements IAuthentication {
     if (account) {
       const IsValid = await this.hashComparer.compare(authenticator.password, account.password)
       if (IsValid) {
-        const token = await this.tokenGenerator.generate(account.id)
+        const token = await this.encrypter.encrypt(account.id)
         await this.updateAccessTokenRepository.update(account.id, token)
         return token
       }
