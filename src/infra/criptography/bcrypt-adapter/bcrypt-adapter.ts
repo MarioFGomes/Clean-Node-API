@@ -1,5 +1,5 @@
-import { type IHasher } from '../../data/protocols/criptography/hash'
-import { type IHashComparer } from '../../data/protocols/criptography/hash-compare'
+import { type IHasher } from '../../../data/protocols/criptography/hash'
+import { type IHashComparer } from '../../../data/protocols/criptography/hash-compare'
 import bcrypt from 'bcrypt'
 
 export class BcryptAdapter implements IHasher, IHashComparer {
