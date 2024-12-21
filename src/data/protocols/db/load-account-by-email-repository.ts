@@ -1,5 +1,5 @@
 import { type AccountModel } from '../../../domain/models/account'
 
-export interface loadAccountByEmailRepository {
+export interface IloadAccountByEmailRepository {
   loadByEmail (email: string): Promise<AccountModel | null>
 }

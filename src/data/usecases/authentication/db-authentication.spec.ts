@@ -1,5 +1,5 @@
 import { DBauthentication } from './db-authentication'
-import { type AccountModel, type AuthenticationModel, type IHashComparer, type IEncrypter, type loadAccountByEmailRepository, type IUpdateAccessTokenRepository } from './db-authentication-protocol'
+import { type AccountModel, type AuthenticationModel, type IHashComparer, type IEncrypter, type IloadAccountByEmailRepository, type IUpdateAccessTokenRepository } from './db-authentication-protocol'
 
 const makeFakeAccount = (): AccountModel => ({
   id: 'any_id',
@@ -15,7 +15,7 @@ const makeFakeAuthentication = (): AuthenticationModel => ({
 
 interface SutTypes {
   sut: DBauthentication
-  loadAccountByEmailRepositoryStub: loadAccountByEmailRepository
+  loadAccountByEmailRepositoryStub: IloadAccountByEmailRepository
   hashComparerStub: IHashComparer
   encrypterStub: IEncrypter
   UpdateAccessTokenRepositoryStub: IUpdateAccessTokenRepository
@@ -36,8 +36,8 @@ const makeSut = (): SutTypes => {
   }
 }
 
-const makeLoadAccountByEmailRepository = (): loadAccountByEmailRepository => {
-  class LoadAccountByEmailRepositoryStub implements loadAccountByEmailRepository {
+const makeLoadAccountByEmailRepository = (): IloadAccountByEmailRepository => {
+  class LoadAccountByEmailRepositoryStub implements IloadAccountByEmailRepository {
     async loadByEmail (email: string): Promise<AccountModel | null> {
       return await new Promise(resolve => { resolve(makeFakeAccount()) })
     }

@@ -1,7 +1,7 @@
-import { type IAuthentication, type AuthenticationModel, type IHashComparer, type IEncrypter, type loadAccountByEmailRepository, type IUpdateAccessTokenRepository } from './db-authentication-protocol'
+import { type IAuthentication, type AuthenticationModel, type IHashComparer, type IEncrypter, type IloadAccountByEmailRepository, type IUpdateAccessTokenRepository } from './db-authentication-protocol'
 
 export class DBauthentication implements IAuthentication {
-  constructor (private readonly loadAccountByEmailRepository: loadAccountByEmailRepository,
+  constructor (private readonly loadAccountByEmailRepository: IloadAccountByEmailRepository,
     private readonly hashComparer: IHashComparer,
     private readonly encrypter: IEncrypter,
     private readonly updateAccessTokenRepository: IUpdateAccessTokenRepository) {}
