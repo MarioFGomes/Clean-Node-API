@@ -1,11 +1,11 @@
-import { SingUpController } from '../../../presentation/controller/singup/singup'
+import { SingUpController } from '../../../presentation/controller/singup/singup-controller'
 import { DbAccount } from '../../../data/usecases/add-account/db-add-account'
 import { BcryptAdapter } from '../../../infra/criptography/bcrypt-adapter/bcrypt-adapter'
-import { AccountMongoRepository } from '../../../infra/db/mongodb/account-repository/account'
-import { LogControllerDecorator } from '../../decorators/log'
+import { AccountMongoRepository } from '../../../infra/db/mongodb/account/account-mongo-repository'
+import { LogControllerDecorator } from '../../decorators/log-controller-decorator'
 import { type IController } from '../../../protocols'
-import { LogMongoRepository } from '../../../infra/db/mongodb/log-repository/log'
-import { makeSignupValidation } from './signup-validations'
+import { LogMongoRepository } from '../../../infra/db/mongodb/log/log-mongo-repository'
+import { makeSignupValidation } from './signup-validations-factory'
 
 export const makeSignupController = (): IController => {
   const bcryptAdapter = new BcryptAdapter(12)

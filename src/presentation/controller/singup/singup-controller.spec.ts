@@ -1,9 +1,9 @@
 import { type AccountModel } from '../../../domain/models/account'
 import { type IAddAccountModel, type IAddAccount } from '../../../domain/usecases/add-account'
-import { type HttpRequest, type IValidation } from './singup-protocols'
+import { type HttpRequest, type IValidation } from './singup-controller-protocols'
 import { ServerError, MissingParamError } from '../../errors'
-import { SingUpController } from './singup'
-import { Ok, BadRequest, serverError } from '../../helpers/http//http-helper'
+import { SingUpController } from './singup-controller'
+import { Ok, BadRequest, serverError } from '../../helpers/http/http-helper'
 
 const makeFakeAccount = (): AccountModel => ({
 
