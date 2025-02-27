@@ -7,12 +7,13 @@
     "start": "node dist/main/server.js",
     "build": "rimraf dist && tsc",
     "dev": "sucrase-node src/main/server.ts",
+    "up":"npm run build && docker-compose up -d",
+    "stop":"docker-compose stop",
     "test": "jest --passWithNoTests --silent --noStackTrace --runInBand",
     "test:unit": "npm test -- --watch -c jest-unit-config.ts",
     "test:integration": "npm test -- --watch -c jest-integration-config.ts",
     "test:verbose": "jest --passWithNoTests --runInBand",
     "lint": "eslint src --ext .ts --fix",
-    "prepare": "husky && husky install",
     "test:staged": "npm test -- --findRelatedTests",
     "test:ci": "npm test -- --coverage"
   },
@@ -59,5 +60,8 @@
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^6.6.2",
     "validator": "^13.12.0"
+  },
+  "engines": {
+    "node": "20.x"
   }
 }
