@@ -13,11 +13,13 @@ services:
     container_name: clean-node-api
     build: .
     image: clean-node-api
-    command: npm start
+    command: npm run start
     volumes:
       - ./dist:/usr/src/clean-node-api/dist
+      - ./package.json:/usr/src/clean-node-api/package.json
     ports:
       - "3333:3333"
+      - "9222:9222"
     restart: always
     links:
       - mongo
