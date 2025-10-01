@@ -1,10 +1,10 @@
+import { ServerError, MissingParamError,EmailInUseError } from '../../errors'
+import { SingUpController } from './singup-controller'
+import { Ok, BadRequest, serverError, Forbidden } from '../../helpers/http/http-helper'
+import { AuthenticationModel, IAuthentication } from './singup-controller-protocols'
 import { type AccountModel } from '../../../domain/models/account'
 import { type IAddAccountModel, type IAddAccount } from '../../../domain/usecases/add-account'
 import { type HttpRequest, type IValidation } from './singup-controller-protocols'
-import { ServerError, MissingParamError } from '../../errors'
-import { SingUpController } from './singup-controller'
-import { Ok, BadRequest, serverError } from '../../helpers/http/http-helper'
-
 const makeFakeAccount = (): AccountModel => ({
 
   id: 'uuid-1',
@@ -13,6 +13,22 @@ const makeFakeAccount = (): AccountModel => ({
   password: 'valid_password'
 
 })
+
+const makeFakerRequest = (): HttpRequest => ({
+  body: {
+    email: 'any_email@mail.com',
+    password: 'any_password'
+  }
+})
+
+const makeAuthentication = (): IAuthentication => {
+  class AuthenticationStub implements IAuthentication {
+    async auth ({ email, password }: AuthenticationModel): Promise<string | null> {
+      return await new Promise(resolve => { resolve('any_token') })
+    }
+  }
+  return new AuthenticationStub()
+}
 
 const makeAddAccount = (): IAddAccount => {
   class AddAccountStub implements IAddAccount {
@@ -38,6 +54,7 @@ interface SutTypes {
   sut: SingUpController
   addAccountStub: IAddAccount
   validationStub: IValidation
+  authenticationStub: IAuthentication
 }
 
 const makeFakeRequest = (): HttpRequest => ({
@@ -53,11 +70,13 @@ const makeFakeRequest = (): HttpRequest => ({
 const makeSut = (): SutTypes => {
   const addAccountStub = makeAddAccount()
   const validationStub = makeFakeValidation()
-  const sut = new SingUpController(addAccountStub, validationStub)
+  const authenticationStub = makeAuthentication()
+  const sut = new SingUpController(addAccountStub, validationStub,authenticationStub)
   return {
     sut,
     addAccountStub,
-    validationStub
+    validationStub,
+    authenticationStub
   }
 }
 describe('SingUpController', () => {
@@ -85,10 +104,17 @@ describe('SingUpController', () => {
     })
   })
 
+  test('should return 403 if AddAccount return null', async () => {
+    const { sut,addAccountStub } = makeSut()
+    jest.spyOn(addAccountStub, 'add').mockReturnValueOnce(new Promise(resolve => { resolve(null) }))
+    const httpResponse = await sut.handle(makeFakeRequest())
+    expect(httpResponse).toEqual(Forbidden(new EmailInUseError()))
+  })
+
   test('should return 200 if AddAccount valid data is provider', async () => {
     const { sut } = makeSut()
     const httpResponse = await sut.handle(makeFakeRequest())
-    expect(httpResponse).toEqual(Ok(makeFakeAccount()))
+    expect(httpResponse).toEqual(Ok({AccessToken:'any_token'}))
   })
 
   test('should call validator with correct values', async () => {
@@ -108,4 +134,18 @@ describe('SingUpController', () => {
     const httpResponse = await sut.handle(makeFakeRequest())
     expect(httpResponse).toEqual(BadRequest(new MissingParamError('any_error')))
   })
+
+  test('should call authenticator with correct values', async () => {
+    const { sut, authenticationStub } = makeSut()
+    const SpyAuth = jest.spyOn(authenticationStub, 'auth')
+    await sut.handle(makeFakerRequest())
+    expect(SpyAuth).toHaveBeenCalledWith({ email: 'any_email@mail.com', password: 'any_password' })
+  })
+
+    test('should return 500 if Authenticator throw', async () => {
+      const { sut, authenticationStub } = makeSut()
+      jest.spyOn(authenticationStub, 'auth').mockReturnValueOnce(new Promise((resolve, reject) => { reject(new Error()) }))
+      const httpResponse = await sut.handle(makeFakerRequest())
+      expect(httpResponse).toEqual(serverError(new Error()))
+    })
 })

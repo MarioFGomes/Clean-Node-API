@@ -6,10 +6,10 @@
   "scripts": {
     "start": "node dist/main/server.js",
     "build": "rimraf dist && tsc",
-    "debug":"node --inspect=0.0.0.0:9222 --nolazy dist/main/server.js",
+    "debug": "node --inspect=0.0.0.0:9222 --nolazy dist/main/server.js",
     "dev": "sucrase-node src/main/server.ts",
-    "up":"npm run build && docker-compose up -d",
-    "stop":"docker-compose stop",
+    "up": "npm run build && docker compose up --watch",
+    "stop": "docker-compose stop",
     "test": "jest --passWithNoTests --silent --noStackTrace --runInBand",
     "test:unit": "npm test -- --watch -c jest-unit-config.ts",
     "test:integration": "npm test -- --watch -c jest-integration-config.ts",
